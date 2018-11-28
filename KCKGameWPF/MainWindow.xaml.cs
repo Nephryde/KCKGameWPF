@@ -22,6 +22,7 @@ namespace KCKGameWPF
     {
         public MainWindow()
         {
+            //Kamil jest głupi
             InitializeComponent();
         }
     }
