@@ -89,7 +89,8 @@ namespace KCKGameWPF
             isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
             isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
 
-            
+            WriteOnPosition(firstPlayerPosition, snake1Color);
+            WriteOnPosition(secondPlayerPosition, snake2Color);
         }
 
         private void GameOver()
@@ -101,7 +102,6 @@ namespace KCKGameWPF
         ////
         // Nowe
         ////
-        ///
 
         private void SetGameField()
         {
@@ -110,7 +110,6 @@ namespace KCKGameWPF
             startingPoint = new Point(5, 225);
             startingPoint2 = new Point(775, 225);
         }
-
 
         private void ChangePlayerDirection(object sender, KeyEventArgs key)
         {
@@ -154,43 +153,35 @@ namespace KCKGameWPF
             if (firstPlayerDirection == right)
             {
                 firstPlayerPosition.X += 1;
-                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
             if (firstPlayerDirection == left)
             {
                 firstPlayerPosition.X -= 1;
-                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
             if (firstPlayerDirection == up)
             {
                 firstPlayerPosition.Y -= 1;
-                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
             if (firstPlayerDirection == down)
             {
                 firstPlayerPosition.Y += 1;
-                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
 
             if (secondPlayerDirection == right)
             {
                 secondPlayerPosition.X += 1;
-                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
             if (secondPlayerDirection == left)
             {
                 secondPlayerPosition.X -= 1;
-                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
             if (secondPlayerDirection == up)
             {
                 secondPlayerPosition.Y -= 1;
-                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
             if (secondPlayerDirection == down)
             {
                 secondPlayerPosition.Y += 1;
-                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
         }
 
@@ -220,6 +211,5 @@ namespace KCKGameWPF
 
             PaintCanvas.Children.Add(newEllipse);
         }
-
     }
 }
