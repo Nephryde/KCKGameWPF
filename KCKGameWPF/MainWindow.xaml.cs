@@ -35,9 +35,9 @@ namespace KCKGameWPF
 
         private enum SnakeSize
         {
-            Thin = 4,
-            Normal = 6,
-            Thick = 8
+            Thin = 3,
+            Normal = 5,
+            Thick = 7
         };
 
         private enum GameSpeed
@@ -86,11 +86,57 @@ namespace KCKGameWPF
                 GameOver();
             }
 
-            isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
-            isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
+            FillUsed(firstPlayerPosition, firstPlayerDirection);
+            FillUsed(secondPlayerPosition, secondPlayerDirection);
 
             WriteOnPosition(firstPlayerPosition, snake1Color);
             WriteOnPosition(secondPlayerPosition, snake2Color);
+        }
+
+        private void FillUsed(Point playerPosition, int playerDirection)
+        {
+            isUsed[(int)playerPosition.X, (int)playerPosition.Y] = true;
+
+            if (playerDirection == left)
+            {
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 2] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 3] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 2] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 3] = true;
+            }
+            else if (playerDirection == right)
+            {
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 2] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 3] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 2] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 3] = true;
+            }
+            else if (playerDirection == down)
+            {
+                isUsed[(int)playerPosition.X + 3, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X + 2, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X - 2, (int)playerPosition.Y - 1] = true;
+                isUsed[(int)playerPosition.X - 3, (int)playerPosition.Y - 1] = true;
+            }
+            else if (playerDirection == up)
+            {
+                isUsed[(int)playerPosition.X + 3, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X + 2, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X - 2, (int)playerPosition.Y + 1] = true;
+                isUsed[(int)playerPosition.X - 3, (int)playerPosition.Y + 1] = true;
+            }
         }
 
         private void GameOver()
