@@ -22,7 +22,7 @@ namespace KCKGameWPF
         private List<Point> snake1 = new List<Point>();
         private readonly Brush snake1Color = Brushes.Green;
 
-        private readonly Point startingPoint = new Point(100, 200);
+        private readonly Point startingPoint = new Point(5, 225);
         private Point firstPlayerPosition = new Point();
 
 
@@ -31,7 +31,7 @@ namespace KCKGameWPF
         private List<Point> snake2 = new List<Point>();
         private readonly Brush snake2Color = Brushes.Red;
 
-        private readonly Point startingPoint2 = new Point(500, 200);
+        private readonly Point startingPoint2 = new Point(775, 225);
         private Point secondPlayerPosition = new Point();
 
 
@@ -53,9 +53,7 @@ namespace KCKGameWPF
 
         /* Here user can change the size of the snake. 
          * Possible sizes are THIN, NORMAL and THICK */
-        private readonly int _headSize = (int)SnakeSize.Thick;
-
-        private readonly Random _rnd = new Random();
+        private readonly int headSize = (int)SnakeSize.Thick;
 
         public MainWindow()
         {
@@ -77,75 +75,22 @@ namespace KCKGameWPF
             secondPlayerPosition = startingPoint2;
         }
 
-
-        private void WriteOnPosition(ref List<Point> snake ,Point currentposition, Brush color)
-        {
-            Ellipse newEllipse = new Ellipse
-            {
-                Fill = color,
-                Width = _headSize,
-                Height = _headSize
-            };
-
-            Canvas.SetTop(newEllipse, currentposition.Y);
-            Canvas.SetLeft(newEllipse, currentposition.X);
-
-            int count = PaintCanvas.Children.Count;
-            PaintCanvas.Children.Add(newEllipse);
-            snake.Add(currentposition);
-        }
-
-
         private void TimerTick(object sender, EventArgs e)
         {
             MovePlayers();
 
-            // Restrict to boundaries of the Canvas
-            if ((firstPlayerPosition.X < 5) || (firstPlayerPosition.X > 780) ||
-                (firstPlayerPosition.Y < 5) || (firstPlayerPosition.Y > 480))
-                GameOver();
-
-            // Restrict to boundaries of the Canvas
-            if ((secondPlayerPosition.X < 5) || (secondPlayerPosition.X > 780) ||
-                (secondPlayerPosition.Y < 5) || (secondPlayerPosition.Y > 480))
-                GameOver();
-
-
-
-            // Restrict hits to body of Snake
-            for (int q = 0; q < (snake1.Count - _headSize * 2); q++)
+            if(DoesPlayerLose())
             {
-                Point point = new Point(snake1[q].X, snake1[q].Y);
-                if ((Math.Abs(point.X - firstPlayerPosition.X) < (_headSize)) &&
-                     (Math.Abs(point.Y - firstPlayerPosition.Y) < (_headSize)))
-                {
-                    GameOver();
-                    break;
-                }
-
-            }
-
-            for (int y = 0; y < (snake2.Count - _headSize * 2); y++)
-            {
-                Point point = new Point(snake2[y].X, snake2[y].Y);
-                if ((Math.Abs(point.X - secondPlayerPosition.X) < (_headSize)) &&
-                     (Math.Abs(point.Y - secondPlayerPosition.Y) < (_headSize)))
-                {
-                    GameOver();
-                    break;
-                }
-
+                GameOver();
             }
 
         }
-
 
         private void GameOver()
         {
             MessageBox.Show($@"You Lose!", "Game Over", MessageBoxButton.OK, MessageBoxImage.Hand);
             this.Close();
         }
-
 
         ////
         // Nowe
@@ -187,7 +132,6 @@ namespace KCKGameWPF
                 secondPlayerDirection = down;
             }
         }
-
 
         private void MovePlayers()
         {
@@ -234,31 +178,57 @@ namespace KCKGameWPF
             }
         }
 
-        static bool DoesPlayerLose(int row, int col)
+        private bool DoesPlayerLose()
         {
-            if (row < 0)
-            {
+            // Restrict to boundaries of the Canvas
+            if ((firstPlayerPosition.X < 5) || (firstPlayerPosition.X > 780) ||
+                (firstPlayerPosition.Y < 5) || (firstPlayerPosition.Y > 480))
                 return true;
-            }
-            if (col < 0)
-            {
+
+            // Restrict to boundaries of the Canvas
+            if ((secondPlayerPosition.X < 5) || (secondPlayerPosition.X > 780) ||
+                (secondPlayerPosition.Y < 5) || (secondPlayerPosition.Y > 480))
                 return true;
-            }
-            if (row >= Console.WindowHeight)
+
+            // Restrict hits to body of Snake
+            for (int q = 0; q < (snake1.Count - headSize * 2); q++)
             {
-                return true;
-            }
-            if (col >= Console.WindowWidth)
-            {
-                return true;
+                Point point = new Point(snake1[q].X, snake1[q].Y);
+                if ((Math.Abs(point.X - firstPlayerPosition.X) < (headSize)) &&
+                     (Math.Abs(point.Y - firstPlayerPosition.Y) < (headSize)))
+                {
+                    return true;
+                }
             }
 
-            if (isUsed[col, row])
+            for (int y = 0; y < (snake2.Count - headSize * 2); y++)
             {
-                return true;
+                Point point = new Point(snake2[y].X, snake2[y].Y);
+                if ((Math.Abs(point.X - secondPlayerPosition.X) < (headSize)) &&
+                     (Math.Abs(point.Y - secondPlayerPosition.Y) < (headSize)))
+                {
+                    return true;
+                }
             }
 
             return false;
+        }
+
+        private void WriteOnPosition(ref List<Point> snake, Point currentposition, Brush color)
+        {
+            Ellipse newEllipse = new Ellipse
+            {
+                Fill = color,
+                Width = headSize,
+                Height = headSize
+            };
+
+            Canvas.SetTop(newEllipse, currentposition.Y);
+            Canvas.SetLeft(newEllipse, currentposition.X);
+
+            int count = PaintCanvas.Children.Count;
+            PaintCanvas.Children.Add(newEllipse);
+            snake.Add(currentposition);
         }
 
     }
