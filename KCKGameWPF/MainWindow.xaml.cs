@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,20 +18,19 @@ namespace KCKGameWPF
 
         static int firstPlayerScore = 0;
         static int firstPlayerDirection = right;
-        private List<Point> snake1 = new List<Point>();
-        private readonly Brush snake1Color = Brushes.Green;
-
-        private readonly Point startingPoint = new Point(5, 225);
         private Point firstPlayerPosition = new Point();
-
+        private readonly Brush snake1Color = Brushes.Green;
 
         static int secondPlayerScore = 0;
         static int secondPlayerDirection = left;
-        private List<Point> snake2 = new List<Point>();
+        private Point secondPlayerPosition = new Point();
         private readonly Brush snake2Color = Brushes.Red;
 
-        private readonly Point startingPoint2 = new Point(775, 225);
-        private Point secondPlayerPosition = new Point();
+        private Point startingPoint = new Point(5, 225);
+        private Point startingPoint2 = new Point(775, 225);
+        
+
+        static bool[,] isUsed;
 
 
         private enum SnakeSize
@@ -42,7 +40,6 @@ namespace KCKGameWPF
             Thick = 8
         };
 
-        //TimeSpan values
         private enum GameSpeed
         {
             Fast = 1,
@@ -51,39 +48,48 @@ namespace KCKGameWPF
             DamnSlow = 500000
         };
 
-        /* Here user can change the size of the snake. 
-         * Possible sizes are THIN, NORMAL and THICK */
-        private readonly int headSize = (int)SnakeSize.Thick;
+        private readonly int headSize = (int)SnakeSize.Normal;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            SetGameField();
+
             DispatcherTimer timer = new DispatcherTimer();
             timer.Tick += new EventHandler(TimerTick);
 
-            /* Here user can change the speed of the snake. 
-             * Possible speeds are FAST, MODERATE, SLOW and DAMNSLOW */
             timer.Interval = new TimeSpan((int)GameSpeed.Moderate);
             timer.Start();
 
             this.KeyDown += new KeyEventHandler(ChangePlayerDirection);
 
-            WriteOnPosition(ref snake1, startingPoint, snake1Color);
+            WriteOnPosition(startingPoint, snake1Color);
             firstPlayerPosition = startingPoint;
 
-            WriteOnPosition(ref snake2, startingPoint2, snake2Color);
+            WriteOnPosition(startingPoint2, snake2Color);
             secondPlayerPosition = startingPoint2;
+
+            isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
+            isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
             MovePlayers();
 
-            if(DoesPlayerLose())
+            bool firstPlayerLoses = DoesPlayerLose(firstPlayerPosition);
+            bool secondPlayerLoses = DoesPlayerLose(secondPlayerPosition);
+
+            if (firstPlayerLoses || secondPlayerLoses)
             {
                 GameOver();
             }
 
+            isUsed[(int)firstPlayerPosition.X, (int)firstPlayerPosition.Y] = true;
+            isUsed[(int)secondPlayerPosition.X, (int)secondPlayerPosition.Y] = true;
+
+            
         }
 
         private void GameOver()
@@ -95,6 +101,16 @@ namespace KCKGameWPF
         ////
         // Nowe
         ////
+        ///
+
+        private void SetGameField()
+        {
+            isUsed = new bool[800, 500];
+
+            startingPoint = new Point(5, 225);
+            startingPoint2 = new Point(775, 225);
+        }
+
 
         private void ChangePlayerDirection(object sender, KeyEventArgs key)
         {
@@ -138,83 +154,59 @@ namespace KCKGameWPF
             if (firstPlayerDirection == right)
             {
                 firstPlayerPosition.X += 1;
-                WriteOnPosition(ref snake1, firstPlayerPosition, snake1Color);
+                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
             if (firstPlayerDirection == left)
             {
                 firstPlayerPosition.X -= 1;
-                WriteOnPosition(ref snake1, firstPlayerPosition, snake1Color);
+                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
             if (firstPlayerDirection == up)
             {
                 firstPlayerPosition.Y -= 1;
-                WriteOnPosition(ref snake1, firstPlayerPosition, snake1Color);
+                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
             if (firstPlayerDirection == down)
             {
                 firstPlayerPosition.Y += 1;
-                WriteOnPosition(ref snake1, firstPlayerPosition, snake1Color);
+                WriteOnPosition(firstPlayerPosition, snake1Color);
             }
 
             if (secondPlayerDirection == right)
             {
                 secondPlayerPosition.X += 1;
-                WriteOnPosition(ref snake2, secondPlayerPosition, snake2Color);
+                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
             if (secondPlayerDirection == left)
             {
                 secondPlayerPosition.X -= 1;
-                WriteOnPosition(ref snake2, secondPlayerPosition, snake2Color);
+                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
             if (secondPlayerDirection == up)
             {
                 secondPlayerPosition.Y -= 1;
-                WriteOnPosition(ref snake2, secondPlayerPosition, snake2Color);
+                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
             if (secondPlayerDirection == down)
             {
                 secondPlayerPosition.Y += 1;
-                WriteOnPosition(ref snake2, secondPlayerPosition, snake2Color);
+                WriteOnPosition(secondPlayerPosition, snake2Color);
             }
         }
 
-        private bool DoesPlayerLose()
+        private bool DoesPlayerLose(Point playerPosition)
         {
-            // Restrict to boundaries of the Canvas
-            if ((firstPlayerPosition.X < 5) || (firstPlayerPosition.X > 780) ||
-                (firstPlayerPosition.Y < 5) || (firstPlayerPosition.Y > 480))
+            if ((playerPosition.X < 5) || (playerPosition.X > 780) ||
+                (playerPosition.Y < 5) || (playerPosition.Y > 480))
                 return true;
 
-            // Restrict to boundaries of the Canvas
-            if ((secondPlayerPosition.X < 5) || (secondPlayerPosition.X > 780) ||
-                (secondPlayerPosition.Y < 5) || (secondPlayerPosition.Y > 480))
+            if(isUsed[(int)playerPosition.X, (int)playerPosition.Y])
                 return true;
-
-            // Restrict hits to body of Snake
-            for (int q = 0; q < (snake1.Count - headSize * 2); q++)
-            {
-                Point point = new Point(snake1[q].X, snake1[q].Y);
-                if ((Math.Abs(point.X - firstPlayerPosition.X) < (headSize)) &&
-                     (Math.Abs(point.Y - firstPlayerPosition.Y) < (headSize)))
-                {
-                    return true;
-                }
-            }
-
-            for (int y = 0; y < (snake2.Count - headSize * 2); y++)
-            {
-                Point point = new Point(snake2[y].X, snake2[y].Y);
-                if ((Math.Abs(point.X - secondPlayerPosition.X) < (headSize)) &&
-                     (Math.Abs(point.Y - secondPlayerPosition.Y) < (headSize)))
-                {
-                    return true;
-                }
-            }
 
             return false;
         }
 
-        private void WriteOnPosition(ref List<Point> snake, Point currentposition, Brush color)
+        private void WriteOnPosition(Point currentposition, Brush color)
         {
             Ellipse newEllipse = new Ellipse
             {
@@ -226,9 +218,7 @@ namespace KCKGameWPF
             Canvas.SetTop(newEllipse, currentposition.Y);
             Canvas.SetLeft(newEllipse, currentposition.X);
 
-            int count = PaintCanvas.Children.Count;
             PaintCanvas.Children.Add(newEllipse);
-            snake.Add(currentposition);
         }
 
     }

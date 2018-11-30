@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KCKGameWPF"
         mc:Ignorable="d"
-        Title="Snake!" Height="500" Width="800" ResizeMode="NoResize">
+        Title="KCK Game" Height="500" Width="800" ResizeMode="NoResize">
     <Grid Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
+            
 
         </Grid.ColumnDefinitions>
         <Canvas Name="PaintCanvas"  
