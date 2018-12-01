@@ -15,6 +15,7 @@ namespace KCKGameWPF
         static readonly int up = 8;
         static readonly int down = 2;
 
+        private readonly int headSize = 6;
         private readonly Brush snake1Color = Brushes.Green;
         private readonly Brush snake2Color = Brushes.Red;
         private readonly Brush obstacleColor = Brushes.Yellow;
@@ -23,7 +24,6 @@ namespace KCKGameWPF
         static int firstPlayerDirection = right;
         private Point firstPlayerPosition = new Point();
        
-
         static int secondPlayerScore = 0;
         static int secondPlayerDirection = left;
         private Point secondPlayerPosition = new Point();
@@ -33,7 +33,7 @@ namespace KCKGameWPF
         
         static bool[,] isUsed;
 
-        //Do trybu speed
+        //Do trybu speed, potem można usunąć
         private enum GameSpeed
         {
             Fast = 1,
@@ -41,8 +41,6 @@ namespace KCKGameWPF
             Slow = 50000,
             DamnSlow = 500000
         };
-
-        private readonly int headSize = 6;
 
         public MainWindow()
         {
@@ -86,7 +84,6 @@ namespace KCKGameWPF
             WriteOnPosition(firstPlayerPosition, snake1Color);
             WriteOnPosition(secondPlayerPosition, snake2Color);
         }
-
 
         private void FillUsed(Point playerPosition, int playerDirection)
         {
@@ -133,6 +130,8 @@ namespace KCKGameWPF
             }
         }
 
+
+        // do usunięcia?
         private void GameOver()
         {
             MessageBox.Show($@"You Lose!", "Game Over", MessageBoxButton.OK, MessageBoxImage.Hand);
