@@ -146,9 +146,14 @@ namespace KCKGameWPF
         {
             isUsed = new bool[800, 500];
 
-            startingPoint = new Point(5, 225);
-            startingPoint2 = new Point(775, 225);
-        }
+            startingPoint = new Point(4, 230);
+            startingPoint2 = new Point(776, 230);
+        }   
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="level"></param>
 
         private void Game(string level)
         {
@@ -272,8 +277,8 @@ namespace KCKGameWPF
 
         private bool DoesPlayerLose(Point playerPosition)
         {
-            if ((playerPosition.X < 5) || (playerPosition.X > 780) ||
-                (playerPosition.Y < 5) || (playerPosition.Y > 480))
+            if ((playerPosition.X < 4) || (playerPosition.X > 776) ||
+                (playerPosition.Y < 4) || (playerPosition.Y > 452))
                 return true;
 
             if(isUsed[(int)playerPosition.X, (int)playerPosition.Y])
