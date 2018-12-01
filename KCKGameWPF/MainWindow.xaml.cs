@@ -15,31 +15,25 @@ namespace KCKGameWPF
         static readonly int up = 8;
         static readonly int down = 2;
 
+        private readonly Brush snake1Color = Brushes.Green;
+        private readonly Brush snake2Color = Brushes.Red;
+        private readonly Brush obstacleColor = Brushes.Yellow;
 
         static int firstPlayerScore = 0;
         static int firstPlayerDirection = right;
         private Point firstPlayerPosition = new Point();
-        private readonly Brush snake1Color = Brushes.Green;
+       
 
         static int secondPlayerScore = 0;
         static int secondPlayerDirection = left;
         private Point secondPlayerPosition = new Point();
-        private readonly Brush snake2Color = Brushes.Red;
-
-        private Point startingPoint = new Point(5, 225);
-        private Point startingPoint2 = new Point(775, 225);
         
-
+        private Point startingPoint;
+        private Point startingPoint2;
+        
         static bool[,] isUsed;
 
-
-        private enum SnakeSize
-        {
-            Thin = 3,
-            Normal = 5,
-            Thick = 7
-        };
-
+        //Do trybu speed
         private enum GameSpeed
         {
             Fast = 1,
@@ -48,13 +42,13 @@ namespace KCKGameWPF
             DamnSlow = 500000
         };
 
-        private readonly int headSize = (int)SnakeSize.Normal;
+        private readonly int headSize = 6;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            SetGameField();
+            Game("obstacles");
 
             DispatcherTimer timer = new DispatcherTimer();
             timer.Tick += new EventHandler(TimerTick);
@@ -93,49 +87,49 @@ namespace KCKGameWPF
             WriteOnPosition(secondPlayerPosition, snake2Color);
         }
 
+
         private void FillUsed(Point playerPosition, int playerDirection)
         {
             isUsed[(int)playerPosition.X, (int)playerPosition.Y] = true;
 
             if (playerDirection == left)
             {
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 2] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 3] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 2] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 3] = true;
+                for(int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + i] = true;
+                }
             }
             else if (playerDirection == right)
             {
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 2] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 3] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 2] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 3] = true;
+                for (int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + i] = true;
+                }
             }
             else if (playerDirection == down)
             {
-                isUsed[(int)playerPosition.X + 3, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X + 2, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X - 2, (int)playerPosition.Y - 1] = true;
-                isUsed[(int)playerPosition.X - 3, (int)playerPosition.Y - 1] = true;
+                for (int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X + i, (int)playerPosition.Y - 1] = true;
+                }
             }
             else if (playerDirection == up)
             {
-                isUsed[(int)playerPosition.X + 3, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X + 2, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X + 1, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X - 1, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X - 2, (int)playerPosition.Y + 1] = true;
-                isUsed[(int)playerPosition.X - 3, (int)playerPosition.Y + 1] = true;
+                for (int i = -4; i <= 4; i++)
+                {
+                    isUsed[(int)playerPosition.X + i, (int)playerPosition.Y + 1] = true;
+                }
+            }
+        }
+
+        private void FillUsedObstacles(Point obstaclePosition)
+        {
+            for(int i = -6; i < 13; i++)
+            {
+                for(int j = -6; j < 13; j++)
+                {
+                    isUsed[(int)obstaclePosition.X + i, (int)obstaclePosition.Y + j] = true;
+                }
             }
         }
 
@@ -156,6 +150,52 @@ namespace KCKGameWPF
             startingPoint = new Point(5, 225);
             startingPoint2 = new Point(775, 225);
         }
+
+        private void Game(string level)
+        {
+            SetGameField();
+
+            int totalRoundNumber = 10;
+            int roundNumber = 1;
+
+            if (level == "obstacles")
+                MakeObstacles(roundNumber);
+
+            /*
+            while (roundNumber <= totalRoundNumber)
+            {
+
+            }
+            */
+        }
+
+        private void ResetGame(ref int roundNumber, string level)
+        {
+            SetGameField();
+            firstPlayerDirection = right;
+            secondPlayerDirection = left;
+
+            roundNumber++;
+
+            if (level == "obstacles" && roundNumber < 10)
+                MakeObstacles(roundNumber);
+
+            MovePlayers();
+        }
+
+        private void MakeObstacles(int roundNumber)
+        {
+            Random random = new Random();
+
+            for (int i = 1; i <= roundNumber * 2 + 5; i++)
+            {
+                Point bonusPoint = new Point(random.Next(100, 680), random.Next(70, 415));
+
+                FillUsedObstacles(bonusPoint);
+                WriteOnObstacle(bonusPoint, obstacleColor);
+            }
+        }
+
 
         private void ChangePlayerDirection(object sender, KeyEventArgs key)
         {
@@ -256,6 +296,23 @@ namespace KCKGameWPF
             Canvas.SetLeft(newEllipse, currentposition.X);
 
             PaintCanvas.Children.Add(newEllipse);
+        }
+
+        private void WriteOnObstacle(Point currentposition, Brush color)
+        {
+            Rectangle rectangle = new Rectangle
+            {
+                Fill = color,
+                Width = 13,
+                Height = 13,
+                Stroke = Brushes.DarkOrange,
+                StrokeThickness = 2
+            };
+
+            Canvas.SetTop(rectangle, currentposition.Y);
+            Canvas.SetLeft(rectangle, currentposition.X);
+
+            PaintCanvas.Children.Add(rectangle);
         }
     }
 }
